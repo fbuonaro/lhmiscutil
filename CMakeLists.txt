@@ -1,7 +1,7 @@
 cmake_minimum_required( VERSION 3.10 )
 
-project( lhutil )
+project( lhmiscutil )
 
 enable_testing()
 
-add_subdirectory( liblhutil )
+add_subdirectory( liblhmiscutil )

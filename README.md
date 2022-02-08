@@ -1,2 +1,2 @@
-# lhutil
+# lhmiscutil
 Misc utilities

@@ -1,6 +1,6 @@
 cmake_minimum_required( VERSION 3.10 )
 
-project( liblhutil )
+project( liblhmiscutil )
 
 # general flags for building successfully
 set( CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++11" )
@@ -24,17 +24,17 @@ if( NOT GTEST_FOUND )
     message( FATAL_ERROR "gtest could not be found" )
 endif( NOT GTEST_FOUND )
 
-add_library( lhutil SHARED
+add_library( lhmiscutil SHARED
     "${LIB_SRC_DIR}/singleton.cxx" )
 
-# target_link_libraries( lhutil
+# target_link_libraries( lhmiscutil
 #     PUBLIC
 #     PRIVATE
 #     )
 
-target_include_directories( lhutil
+target_include_directories( lhmiscutil
     PUBLIC
-        "${LIB_INC_DIR}/lhutil"
+        "${LIB_INC_DIR}/lhmiscutil"
     PRIVATE
         "${CMAKE_CURRENT_BINARY_DIR}" )
 
@@ -46,40 +46,40 @@ set( TST_SRC_DIR "./test" )
 
 enable_testing()
 
-add_executable( testlhutil
-    "${TST_SRC_DIR}/testlhutil.cxx" )
+add_executable( testlhmiscutil
+    "${TST_SRC_DIR}/testlhmiscutil.cxx" )
 
-target_link_libraries( testlhutil
+target_link_libraries( testlhmiscutil
     PRIVATE
         "${GTEST_BOTH_LIBRARIES}"
-        lhutil )
+        lhmiscutil )
 
-target_include_directories( testlhutil
+target_include_directories( testlhmiscutil
     PRIVATE
         "${CMAKE_CURRENT_BINARY_DIR}"
         "${GTEST_INCLUDE_DIRS}"
-        "${LIB_INC_DIR}/lhutil" )
+        "${LIB_INC_DIR}/lhmiscutil" )
 
 include( GoogleTest )
-gtest_add_tests( TARGET testlhutil )
+gtest_add_tests( TARGET testlhmiscutil )
 
 ##############################################################
 # installation
 ##############################################################
 
 # library
-install( TARGETS lhutil
+install( TARGETS lhmiscutil
          LIBRARY
             DESTINATION lib
-            COMPONENT lhutil )
+            COMPONENT lhmiscutil )
 
 # include directory
-install( DIRECTORY "${LIB_INC_DIR}/lhutil/lhutil"
+install( DIRECTORY "${LIB_INC_DIR}/lhmiscutil/lhmiscutil"
          DESTINATION include
-         COMPONENT lhutil
+         COMPONENT lhmiscutil
          FILES_MATCHING PATTERN "*.h" )
 
-ADD_CUSTOM_TARGET( install-lhutil
+ADD_CUSTOM_TARGET( install-lhmiscutil
                    ${CMAKE_COMMAND}
-                   -D "CMAKE_INSTALL_COMPONENT=lhutil"
+                   -D "CMAKE_INSTALL_COMPONENT=lhmiscutil"
                    -P "cmake_install.cmake" )

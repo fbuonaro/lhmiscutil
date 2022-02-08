@@ -3,11 +3,11 @@
 #include <sstream>
 #include <string>
 
-#include <lhutil/singleton.h>
+#include <lhmiscutil/singleton.h>
 
-namespace LHUtilTestNS
+namespace LHMiscUtilTestNS
 {
-    using namespace LHUtilNS;
+    using namespace LHMiscUtilNS;
 
     class BaseC
     {
@@ -87,17 +87,17 @@ namespace LHUtilTestNS
 
 }
 
-namespace LHUtilNS
+namespace LHMiscUtilNS
 {
-    using namespace LHUtilTestNS;
-    using namespace LHUtilTestNS::TestNS1;
+    using namespace LHMiscUtilTestNS;
+    using namespace LHMiscUtilTestNS::TestNS1;
 
     EnableClassAsSingleton( BaseC, SingletonCanBeSet::Once );
     EnableClassAsSingleton( BaseA, SingletonCanBeSet::Repeatedly );
     EnableClassAsSingleton( TestNS2::BaseB, SingletonCanBeSet::WhenEmpty );
 }
 
-namespace LHUtilTestNS
+namespace LHMiscUtilTestNS
 {
     using namespace TestNS1;
     using namespace TestNS2;
@@ -260,7 +260,7 @@ namespace LHUtilTestNS
 
         try
         {
-            Singleton< BaseC >::SetInstance( std::shared_ptr< LHUtilTestNS::BaseC >() );
+            Singleton< BaseC >::SetInstance( std::shared_ptr< LHMiscUtilTestNS::BaseC >() );
         }
         catch( const SingletonException& se )
         {
@@ -278,8 +278,8 @@ namespace LHUtilTestNS
 
     TEST_F( SingletonTest, TestSetGetOnceSuccess )
     {
-        auto a = std::shared_ptr< LHUtilTestNS::TestNS1::BaseA >( new ClassA2() );
-        auto b = std::shared_ptr< LHUtilTestNS::TestNS2::BaseB >( new ClassB2() );
+        auto a = std::shared_ptr< LHMiscUtilTestNS::TestNS1::BaseA >( new ClassA2() );
+        auto b = std::shared_ptr< LHMiscUtilTestNS::TestNS2::BaseB >( new ClassB2() );
         Singleton< TestNS1::BaseA >::SetInstance( a );
         Singleton< BaseB >::SetInstance( b );
 
@@ -296,7 +296,7 @@ namespace LHUtilTestNS
     TEST_F( SingletonTest, TestSetGetOutOfScopeThrows )
     {
         {
-            auto c = std::shared_ptr< LHUtilTestNS::BaseC >( new ClassA1( 1 ) );
+            auto c = std::shared_ptr< LHMiscUtilTestNS::BaseC >( new ClassA1( 1 ) );
             Singleton< BaseC >::SetInstance( c );
             std::shared_ptr< BaseC > instanceAa = Singleton< BaseC >::GetInstance();
             ASSERT_TRUE( instanceAa != nullptr );
@@ -326,10 +326,10 @@ namespace LHUtilTestNS
 
     TEST_F( SingletonTest, TestSetGetWhenEmptySuccessOutOfScopeSetSuccess )
     {
-        auto b1 = std::shared_ptr< LHUtilTestNS::TestNS2::BaseB >( new ClassB1( "testB1" ) );
+        auto b1 = std::shared_ptr< LHMiscUtilTestNS::TestNS2::BaseB >( new ClassB1( "testB1" ) );
 
         {
-            auto b2 = std::shared_ptr< LHUtilTestNS::TestNS2::BaseB >( new ClassB1( "testB2" ) );
+            auto b2 = std::shared_ptr< LHMiscUtilTestNS::TestNS2::BaseB >( new ClassB1( "testB2" ) );
             Singleton< BaseB >::SetInstance( b2 );
             std::shared_ptr< TestNS2::BaseB > instanceB = Singleton< TestNS2::BaseB >::GetInstance();
             ASSERT_TRUE( instanceB != nullptr );
@@ -364,11 +364,11 @@ namespace LHUtilTestNS
 
     TEST_F( SingletonTest, TestSetGetRepeatedlySuccess )
     {
-        auto a = std::shared_ptr< LHUtilTestNS::TestNS1::BaseA >( new ClassA2() );
+        auto a = std::shared_ptr< LHMiscUtilTestNS::TestNS1::BaseA >( new ClassA2() );
         Singleton< TestNS1::BaseA >::SetInstance( a );
         std::shared_ptr< BaseC > instanceA = Singleton< TestNS1::BaseA >::GetInstance();
 
-        auto a2 = std::shared_ptr< LHUtilTestNS::TestNS1::BaseA >( new ClassA1( 123 ) );
+        auto a2 = std::shared_ptr< LHMiscUtilTestNS::TestNS1::BaseA >( new ClassA1( 123 ) );
         Singleton< TestNS1::BaseA >::SetInstance( a2 );
         std::shared_ptr< BaseC > instanceA2 = Singleton< TestNS1::BaseA >::GetInstance();
 

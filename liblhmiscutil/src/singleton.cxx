@@ -1,6 +1,6 @@
-#include <lhutil/singleton.h>
+#include <lhmiscutil/singleton.h>
 
-namespace LHUtilNS
+namespace LHMiscUtilNS
 {
     SingletonException::SingletonException( const std::string& failure )
     : std::runtime_error( failure )

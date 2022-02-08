@@ -5,20 +5,20 @@ import os
 import subprocess
 import sys
 
-DFLT_LHMODEL_IMAGE_NAME = "lhutil:test-env"
+DFLT_LHMODEL_IMAGE_NAME = "lhmiscutil:test-env"
 
 def getParser():
     parser = argparse.ArgumentParser(
-        description='start lhutil development container')
+        description='start lhmiscutil development container')
     cwd = os.getcwd()
 
     parser.add_argument(
         '-i', '--image',
-        help='lhutil image name',
+        help='lhmiscutil image name',
         default=DFLT_LHMODEL_IMAGE_NAME )
     parser.add_argument(
         '-p', '--project_root',
-        help='root of lhutil project, default to $PWD',
+        help='root of lhmiscutil project, default to $PWD',
         default=cwd )
 
     return parser
@@ -33,7 +33,7 @@ def main():
         '--rm',
         '-it',
         '-v',
-        '{0}:/lhutil-dev'.format( args.project_root ),
+        '{0}:/lhmiscutil-dev'.format( args.project_root ),
         '--cap-add=SYS_PTRACE', 
         '--entrypoint',
         '/bin/bash',

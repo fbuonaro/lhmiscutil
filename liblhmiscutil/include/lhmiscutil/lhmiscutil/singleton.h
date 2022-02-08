@@ -1,11 +1,11 @@
-#ifndef __LHUTIL_SINGLETON_H__
-#define __LHUTIL_SINGLETON_H__
+#ifndef __LHMISCUTIL_SINGLETON_H__
+#define __LHMISCUTIL_SINGLETON_H__
 
 #include <memory>
 #include <sstream>
 #include <stdexcept>
 
-namespace LHUtilNS
+namespace LHMiscUtilNS
 {
     class SingletonException : public std::runtime_error
     {
