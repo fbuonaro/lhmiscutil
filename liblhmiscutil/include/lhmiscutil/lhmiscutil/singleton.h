@@ -9,9 +9,9 @@ namespace LHMiscUtilNS
 {
     class SingletonException : public std::runtime_error
     {
-        public:
-            SingletonException( const std::string& failure );
-            virtual ~SingletonException();
+    public:
+        SingletonException( const std::string& failure );
+        virtual ~SingletonException();
     };
 
     enum class SingletonCanBeSet
@@ -24,10 +24,10 @@ namespace LHMiscUtilNS
     template< typename T >
     class SingletonTraits
     {
-        public:
-           static constexpr const bool enabled = false;
-           static constexpr const char* name = "_UNKNOWN_";
-           static constexpr const SingletonCanBeSet canBeSet = SingletonCanBeSet::Repeatedly;
+    public:
+        static constexpr const bool enabled = false;
+        static constexpr const char* name = "_UNKNOWN_";
+        static constexpr const SingletonCanBeSet canBeSet = SingletonCanBeSet::Repeatedly;
     };
 
 #define EnableClassAsSingleton( classPath, canBeSetdWhen ) \
@@ -44,97 +44,97 @@ namespace LHMiscUtilNS
     class Singleton
     {
         static_assert( SingletonTraits< T >::enabled,
-                      "Class is not enabled as singleton, use EnableClassAsSingleton" );
-        public:
-            static std::shared_ptr< T > GetInstance()
-            {
-                auto instance = singleton.getInstance();
+            "Class is not enabled as singleton, use EnableClassAsSingleton" );
+    public:
+        static std::shared_ptr< T > GetInstance()
+        {
+            auto instance = singleton.getInstance();
 
-                if( !instance )
+            if ( !instance )
+            {
+                std::ostringstream oss;
+
+                oss << "singleton for [" << SingletonTraits< T >::name << "] is empty";
+
+                throw SingletonException( oss.str() );
+            }
+
+            return instance;
+        }
+
+        static void SetInstance( const std::shared_ptr< T >& instance )
+        {
+            if ( !instance )
+            {
+                std::ostringstream oss;
+
+                oss << "singleton for [" << SingletonTraits< T >::name << "] passed null instance";
+
+                throw SingletonException( oss.str() );
+            }
+
+            switch ( SingletonTraits< T >::canBeSet )
+            {
+            case( SingletonCanBeSet::Once ):
+            {
+                if ( singleton.hasBeenSet )
                 {
                     std::ostringstream oss;
 
-                    oss << "singleton for [" << SingletonTraits< T >::name << "] is empty";
+                    oss << "singleton for [" << SingletonTraits< T >::name << "] can only be set once";
 
                     throw SingletonException( oss.str() );
                 }
 
-                return instance;
+                break;
             }
-
-            static void SetInstance( const std::shared_ptr< T >& instance )
+            case( SingletonCanBeSet::WhenEmpty ):
             {
-                if( !instance )
+                if ( auto existingInstance = singleton.getInstance() )
                 {
                     std::ostringstream oss;
 
-                    oss << "singleton for [" << SingletonTraits< T >::name << "] passed null instance";
+                    oss << "singleton for [" << SingletonTraits< T >::name << "] can only be set when empty";
 
                     throw SingletonException( oss.str() );
                 }
 
-                switch( SingletonTraits< T >::canBeSet )
-                {
-                    case( SingletonCanBeSet::Once ):
-                    {
-                        if( singleton.hasBeenSet )
-                        {
-                            std::ostringstream oss;
-
-                            oss << "singleton for [" << SingletonTraits< T >::name << "] can only be set once";
-
-                            throw SingletonException( oss.str() );
-                        }
-
-                        break;
-                    }
-                    case( SingletonCanBeSet::WhenEmpty ):
-                    {
-                        if( auto existingInstance = singleton.getInstance() )
-                        {
-                            std::ostringstream oss;
-
-                            oss << "singleton for [" << SingletonTraits< T >::name << "] can only be set when empty";
-
-                            throw SingletonException( oss.str() );
-                        }
-
-                        break;
-                    }
-                    default:
-                    case( SingletonCanBeSet::Repeatedly ):
-                    {
-                        break;
-                    }
-                }
-
-                singleton.setInstance( instance );
+                break;
             }
-
-        private:
-            // Private implementation of a container with a handle to a T
-            Singleton()
-            :   instanceHandle()
-            ,   hasBeenSet( false )
+            default:
+            case( SingletonCanBeSet::Repeatedly ):
             {
+                break;
+            }
             }
 
-            std::shared_ptr< T > getInstance()
-            {
-                return instanceHandle.lock();
-            }
+            singleton.setInstance( instance );
+        }
 
-            void setInstance( const std::shared_ptr< T >& instance )
-            {
-                instanceHandle = instance;
-                hasBeenSet = true;
-            }
+    private:
+        // Private implementation of a container with a handle to a T
+        Singleton()
+            : instanceHandle()
+            , hasBeenSet( false )
+        {
+        }
 
-            std::weak_ptr< T > instanceHandle;
-            bool hasBeenSet;
+        std::shared_ptr< T > getInstance()
+        {
+            return instanceHandle.lock();
+        }
 
-            // The static container of a T
-            static Singleton< T > singleton;
+        void setInstance( const std::shared_ptr< T >& instance )
+        {
+            instanceHandle = instance;
+            hasBeenSet = true;
+        }
+
+        std::weak_ptr< T > instanceHandle;
+        bool hasBeenSet;
+
+        // The static container of a T
+        static Singleton< T > singleton;
     };
 
     template< typename T >
