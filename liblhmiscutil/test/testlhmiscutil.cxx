@@ -4,6 +4,7 @@
 #include <string>
 
 #include <lhmiscutil/singleton.h>
+#include <lhmiscutil/onetimecreate.h>
 
 namespace LHMiscUtilTestNS
 {
@@ -11,77 +12,77 @@ namespace LHMiscUtilTestNS
 
     class BaseC
     {
-        public:
-            BaseC()
-            {
-            }
+    public:
+        BaseC()
+        {
+        }
 
-            virtual ~BaseC()
-            {
-            }
+        virtual ~BaseC()
+        {
+        }
 
-            virtual std::string GetIdentifier() const = 0;
+        virtual std::string GetIdentifier() const = 0;
     };
 
     namespace TestNS1
     {
         class BaseA : public BaseC
         {
-            public:
-                BaseA( int _number )
-                :   BaseC()
-                ,   number( _number )
-                {
-                }
+        public:
+            BaseA( int _number )
+                : BaseC()
+                , number( _number )
+            {
+            }
 
-                ~BaseA()
-                {
-                }
+            ~BaseA()
+            {
+            }
 
-                virtual std::string GetIdentifier() const
-                {
-                    std::ostringstream oss;
-                    oss << GetNumber();
-                    return oss.str();
-                }
+            virtual std::string GetIdentifier() const
+            {
+                std::ostringstream oss;
+                oss << GetNumber();
+                return oss.str();
+            }
 
-                int GetNumber() const
-                {
-                    return number;
-                }
+            int GetNumber() const
+            {
+                return number;
+            }
 
-            private:
-                int number;
+        private:
+            int number;
         };
     }
-    
+
     namespace TestNS2
     {
         class BaseB : public BaseC
         {
-            public:
-                BaseB( const std::string& _name )
-                :   BaseC()
-                ,   name( _name )
-                {
-                }
+        public:
+            BaseB( const std::string& _name )
+                : BaseC()
+                , name( _name )
+            {
+            }
 
-                virtual ~BaseB()
-                {
-                }
+            virtual ~BaseB()
+            {
+            }
 
-                std::string GetIdentifier() const
-                {
-                    return GetName();
-                }
+            std::string GetIdentifier() const
+            {
+                return GetName();
+            }
 
-                virtual std::string GetName() const
-                {
-                    return name;
-                }
+            virtual std::string GetName() const
+            {
+                return name;
+            }
 
-            private:
-                std::string name;
+        private:
+            std::string name;
         };
     }
 
@@ -104,60 +105,60 @@ namespace LHMiscUtilTestNS
 
     class ClassA1 : public BaseA
     {
-        public:
-            ClassA1( int number )
-            :   BaseA( number )
-            {
-            }
+    public:
+        ClassA1( int number )
+            : BaseA( number )
+        {
+        }
     };
 
     class ClassA2 : public BaseA
     {
-        public:
-            ClassA2()
-            :   BaseA( -1 )
-            {
-            }
+    public:
+        ClassA2()
+            : BaseA( -1 )
+        {
+        }
 
-            std::string GetIdentifier() const
-            {
-                return "ClassA2";
-            }
+        std::string GetIdentifier() const
+        {
+            return "ClassA2";
+        }
     };
 
     class ClassB1 : public BaseB
     {
-        public:
-            ClassB1( const std::string& name )
-            :   BaseB( name )
-            {
-            }
+    public:
+        ClassB1( const std::string& name )
+            : BaseB( name )
+        {
+        }
     };
 
     class ClassB2 : public BaseB
     {
-        public:
-            ClassB2()
-            :   BaseB( "" )
-            {
-            }
+    public:
+        ClassB2()
+            : BaseB( "" )
+        {
+        }
 
-            std::string GetName() const
-            {
-                return "ClassB2";
-            }
+        std::string GetName() const
+        {
+            return "ClassB2";
+        }
     };
 
 
     class SingletonTest : public ::testing::Test
     {
-            virtual void SetUp()
-            {   
-            }
+        virtual void SetUp()
+        {
+        }
 
-            virtual void TearDown()
-            {
-            }
+        virtual void TearDown()
+        {
+        }
     };
 
 
@@ -170,12 +171,12 @@ namespace LHMiscUtilTestNS
         {
             auto instance = Singleton< BaseC >::GetInstance();
         }
-        catch( const SingletonException& se )
+        catch ( const SingletonException& se )
         {
             msg = se.what();
             exceptionThrown = true;
         }
-        catch( ... )
+        catch ( ... )
         {
             exceptionThrown = true;
         }
@@ -193,12 +194,12 @@ namespace LHMiscUtilTestNS
         {
             auto instance = Singleton< TestNS1::BaseA >::GetInstance();
         }
-        catch( const SingletonException& se )
+        catch ( const SingletonException& se )
         {
             msg = se.what();
             exceptionThrown = true;
         }
-        catch( ... )
+        catch ( ... )
         {
             exceptionThrown = true;
         }
@@ -216,12 +217,12 @@ namespace LHMiscUtilTestNS
         {
             auto instance = Singleton< BaseB >::GetInstance();
         }
-        catch( const SingletonException& se )
+        catch ( const SingletonException& se )
         {
             msg = se.what();
             exceptionThrown = true;
         }
-        catch( ... )
+        catch ( ... )
         {
             exceptionThrown = true;
         }
@@ -239,12 +240,12 @@ namespace LHMiscUtilTestNS
         {
             Singleton< BaseC >::SetInstance( nullptr );
         }
-        catch( const SingletonException& se )
+        catch ( const SingletonException& se )
         {
             msg = se.what();
             exceptionThrown = true;
         }
-        catch( ... )
+        catch ( ... )
         {
             exceptionThrown = true;
         }
@@ -262,12 +263,12 @@ namespace LHMiscUtilTestNS
         {
             Singleton< BaseC >::SetInstance( std::shared_ptr< LHMiscUtilTestNS::BaseC >() );
         }
-        catch( const SingletonException& se )
+        catch ( const SingletonException& se )
         {
             msg = se.what();
             exceptionThrown = true;
         }
-        catch( ... )
+        catch ( ... )
         {
             exceptionThrown = true;
         }
@@ -310,12 +311,12 @@ namespace LHMiscUtilTestNS
         {
             auto instance = Singleton< BaseC >::GetInstance();
         }
-        catch( const SingletonException& se )
+        catch ( const SingletonException& se )
         {
             msg = se.what();
             exceptionThrown = true;
         }
-        catch( ... )
+        catch ( ... )
         {
             exceptionThrown = true;
         }
@@ -342,12 +343,12 @@ namespace LHMiscUtilTestNS
             {
                 Singleton< BaseB >::SetInstance( b1 );
             }
-            catch( const SingletonException& se )
+            catch ( const SingletonException& se )
             {
                 msg = se.what();
                 exceptionThrown = true;
             }
-            catch( ... )
+            catch ( ... )
             {
                 exceptionThrown = true;
             }
@@ -376,5 +377,89 @@ namespace LHMiscUtilTestNS
         EXPECT_EQ( std::string( "ClassA2" ), instanceA->GetIdentifier() );
         ASSERT_TRUE( instanceA2 != nullptr );
         EXPECT_EQ( std::string( "123" ), instanceA2->GetIdentifier() );
+    }
+}
+
+namespace LHMiscUtilTestNS
+{
+    struct OneTimeThingA
+    {
+        OneTimeThingA( int _i )
+            : i( _i )
+            , s( "" )
+        {
+
+        }
+
+        OneTimeThingA( const std::string& _s )
+            : i( -1 )
+            , s( _s )
+        {
+        }
+
+        int i;
+        std::string s;
+    };
+
+    struct OneTimeThingB
+    {
+        OneTimeThingB( int _i )
+            : i( _i )
+            , s( "" )
+        {
+
+        }
+
+        OneTimeThingB( const std::string& _s, int _i )
+            : i( _i )
+            , s( _s )
+        {
+        }
+
+        int i;
+        std::string s;
+    };
+}
+
+namespace LHMiscUtilNS
+{
+    using namespace LHMiscUtilTestNS;
+
+    EnableClassAsOneTimeCreate( OneTimeThingA );
+    EnableClassAsOneTimeCreate( OneTimeThingB );
+}
+
+namespace LHMiscUtilTestNS
+{
+    class OneTimeCreateTest : public ::testing::Test
+    {
+        virtual void SetUp()
+        {
+        }
+
+        virtual void TearDown()
+        {
+        }
+    };
+
+
+    TEST_F( OneTimeCreateTest, TestOneTimeCreateA )
+    {
+        auto getA1 = LHMiscUtilNS::OneTimeCreate< OneTimeThingA >::Create( 123 );
+        auto getA2 = LHMiscUtilNS::OneTimeCreate< OneTimeThingA >::Create( "hi" );
+        auto getA3 = LHMiscUtilNS::OneTimeCreate< OneTimeThingA >::Create( 456 );
+        ASSERT_TRUE( getA1.get() ) << "failed to get a1";
+        ASSERT_FALSE( getA2.get() ) << "got a2";
+        ASSERT_FALSE( getA3.get() ) << "got a3";
+        ASSERT_TRUE( getA1->s.empty() );
+        ASSERT_EQ( 123, getA1->i );
+    }
+
+    TEST_F( OneTimeCreateTest, TestOneTimeCreateB )
+    {
+        auto getB1 = LHMiscUtilNS::OneTimeCreate< OneTimeThingB >::Create( "hi", 123 );
+        ASSERT_TRUE( getB1.get() ) << "failed to get b1";
+        ASSERT_STREQ( "hi", getB1->s.c_str() );
+        ASSERT_EQ( 123, getB1->i );
     }
 }

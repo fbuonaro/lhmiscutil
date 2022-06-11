@@ -2,6 +2,7 @@
 #define __LHMISCUTIL_SINGLETON_H__
 
 #include <memory>
+#include <mutex>
 #include <sstream>
 #include <stdexcept>
 
@@ -73,11 +74,32 @@ namespace LHMiscUtilNS
                 throw SingletonException( oss.str() );
             }
 
+            singleton.setInstance( instance );
+        }
+
+    private:
+        // Private implementation of a container with a handle to a T
+        Singleton()
+            : instanceHandle()
+            , hasBeenSet( false )
+            , singletonMutex()
+        {
+        }
+
+        std::shared_ptr< T > getInstance()
+        {
+            return instanceHandle.lock();
+        }
+
+        void setInstance( const std::shared_ptr< T >& instance )
+        {
+            const std::lock_guard<std::mutex> lock( singletonMutex );
+
             switch ( SingletonTraits< T >::canBeSet )
             {
             case( SingletonCanBeSet::Once ):
             {
-                if ( singleton.hasBeenSet )
+                if ( hasBeenSet )
                 {
                     std::ostringstream oss;
 
@@ -90,7 +112,7 @@ namespace LHMiscUtilNS
             }
             case( SingletonCanBeSet::WhenEmpty ):
             {
-                if ( auto existingInstance = singleton.getInstance() )
+                if ( auto existingInstance = getInstance() )
                 {
                     std::ostringstream oss;
 
@@ -108,37 +130,20 @@ namespace LHMiscUtilNS
             }
             }
 
-            singleton.setInstance( instance );
-        }
-
-    private:
-        // Private implementation of a container with a handle to a T
-        Singleton()
-            : instanceHandle()
-            , hasBeenSet( false )
-        {
-        }
-
-        std::shared_ptr< T > getInstance()
-        {
-            return instanceHandle.lock();
-        }
-
-        void setInstance( const std::shared_ptr< T >& instance )
-        {
             instanceHandle = instance;
             hasBeenSet = true;
         }
 
         std::weak_ptr< T > instanceHandle;
         bool hasBeenSet;
+        std::mutex singletonMutex;
 
         // The static container of a T
         static Singleton< T > singleton;
     };
 
     template< typename T >
-    Singleton< T > Singleton< T >::singleton = Singleton< T >();
+    Singleton< T > Singleton< T >::singleton;
 }
 
 #endif

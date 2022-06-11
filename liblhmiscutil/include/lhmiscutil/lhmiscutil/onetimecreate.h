@@ -35,32 +35,30 @@ namespace LHMiscUtilNS
         template< class... Args >
         static std::shared_ptr< T > Create( Args&&... args )
         {
-            static OneTimeCreate< T > oneTimeCreated( std::forward<Args>( args )... );
-            return oneTimeCreated.Get()
+            return oneTimeCreate.create( std::forward<Args>( args )... );
         }
 
     private:
-        template< class... Args >
-        OneTimeCreate( Args&&... args )
-            : ptr( std::make_shared< T >( std::forward<Args>( args )... ) )
-            , ptrMutex()
+        OneTimeCreate()
+            : hasBeenCreated( false )
+            , onceMutex()
         {
-            if ( !ptr )
-            {
-                std::ostringstream oss;
-
-                oss << "OneTimeCreate of [" << OneTimeCreateTraits< T >::name << "] failed";
-
-                throw std::runtime_error( oss.str() );
-            }
         }
 
-        std::shared_ptr< T > Get()
+        template< class... Args >
+        std::shared_ptr< T > create( Args&&... args )
         {
-            const std::lock_guard<std::mutex> lock( ptrMutex );
-            if ( ptr )
+            const std::lock_guard<std::mutex> lock( onceMutex );
+            if ( !hasBeenCreated )
             {
-                return std::move( ptr );
+                auto once = std::make_shared< T >( std::forward<Args>( args )... );
+
+                if ( once )
+                {
+                    hasBeenCreated = true;
+                }
+
+                return once;
             }
             else
             {
@@ -68,9 +66,13 @@ namespace LHMiscUtilNS
             }
         }
 
-        std::shared_ptr< T > ptr;
-        std::mutex ptrMutex;
+        bool hasBeenCreated;
+        std::mutex onceMutex;
+        static OneTimeCreate< T > oneTimeCreate;
     };
+
+    template< typename T >
+    OneTimeCreate< T > OneTimeCreate< T >::oneTimeCreate;
 }
 
 #endif
