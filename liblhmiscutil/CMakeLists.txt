@@ -71,7 +71,7 @@ gtest_add_tests( TARGET testlhmiscutil )
 ##############################################################
 
 # name of component to install
-set(LH_COMPONENT_NAME liblhcluster )
+set(LH_COMPONENT_NAME liblhmiscutil )
 # directories to install
 set(LH_LIB_PUBLIC_INCLUDE_DIRS "include/lhmiscutil/lhmiscutil")
 
