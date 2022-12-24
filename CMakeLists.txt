@@ -8,4 +8,10 @@ project( lhmiscutil
 
 enable_testing()
 
-add_subdirectory( liblhmiscutil )
+set(LH_SUBDIRECTORIES liblhmiscutil)
+
+include("modules/lhscriptutil/cmake/lhmacros.cmake")
+
+lh_toplevel_add_subdirectories()
+
+lh_toplevel_add_cpack_package_components()
