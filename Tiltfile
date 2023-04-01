@@ -14,4 +14,4 @@ lhQuickBuildImage = commonTilt[ "lhQuickBuildImage" ]
 lhQuickBuildImageNoK8 = commonTilt[ "lhQuickBuildImageNoK8" ]
 cfg = lhscriptutilTilt[ "cfg" ]
 
-lhQuickBuildImageNoK8( "${component}", cfg )
+lhQuickBuildImageNoK8( "lhmiscutil", cfg )
