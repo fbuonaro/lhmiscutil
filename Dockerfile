@@ -13,6 +13,9 @@ RUN yum -y --enablerepo=extras install epel-release && \
 ##################################################################################
 # STAGE 1 - build tools and libraries needed to build lhmiscutil
 ##################################################################################
+### deps ###
+FROM lhscriptutil:dist-${BUILD_TAG} AS lhscriptutil_dist_build
+### deps ###
 FROM lhmiscutil-base-env as lhmiscutil-build-env
 
 # for compiling and unit testing
@@ -25,8 +28,8 @@ RUN yum -y install \
         rpm-build && \
     yum clean all
 
-ADD ./modules/lhscriptutil/scripts/refreshOrSetupLHDistYumRepo.sh /refreshOrSetupLHDistYumRepo.sh
-RUN /refreshOrSetupLHDistYumRepo.sh
+COPY --from=lhscriptutil_dist_build /lhscriptutil/ /lhscriptutil/
+RUN /lhscriptutil/scripts/refreshOrSetupLHDistYumRepo.sh
 
 ENTRYPOINT [ "bash" ]
 
@@ -47,7 +50,7 @@ RUN cd /lhmiscutil && \
     make && \
     make test && \
     make package
-RUN /refreshOrSetupLHDistYumRepo.sh
+RUN /lhscriptutil/scripts/refreshOrSetupLHDistYumRepo.sh
 
 ENV BUILD_TAG=${BUILD_TAG}
 LABEL build_tag="${BUILD_TAG}"
@@ -71,29 +74,17 @@ RUN cd /lhmiscutil/build && \
 ##################################################################################
 FROM lhmiscutil-base-env as lhmiscutil-main
 
-COPY --from=lhmiscutil-build /etc/ /etc/
-COPY --from=lhmiscutil-build /opt/ /opt/
-COPY --from=lhmiscutil-build /usr/ /usr/
-COPY --from=lhmiscutil-build /lhmiscutil/ /lhmiscutil/
-RUN cd /lhmiscutil/build && \
-    make install && \
-    make package && \
+COPY --from=lhmiscutil-build /lhdist/ /lhdist/
+COPY --from=lhmiscutil-build-env /lhscriptutil/ /lhscriptutil/
+RUN /lhscriptutil/scripts/refreshOrSetupLHDistYumRepo.sh
+RUN yum -y repo-pkgs lhdistrepo install && \
     ldconfig && \
-    cd / && \
-    rm -rf /lhmiscutil
+    yum clean all
 
 ##################################################################################
 # STAGE 5 - the base image with additional built runtime dependencies and 
 #           lhmiscutil binaries includes nothing from build-env
 ##################################################################################
-FROM lhmiscutil-base-env as lhmiscutil-dist-test
-
-COPY --from=lhmiscutil-build /lhdist/ /lhdist/
-RUN /refreshOrSetupLHDistYumRepo.sh
-RUN yum -y repo-pkgs lhdistrepo install && \
-    ldconfig && \
-    yum clean all
-
 FROM lhmiscutil-base-env as lhmiscutil-dist
 
 COPY --from=lhmiscutil-main /lhdist/ /lhdist/
