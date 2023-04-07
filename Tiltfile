@@ -1,3 +1,7 @@
+###############################################################################
+# BOILERPLATE START
+###############################################################################
+# TILT_GIT_RESOURCE_CHECKOUT_DIR can be used set the directory where dependent projects
 gitModulesCheckoutOutDirEnvVar = "TILT_GIT_RESOURCE_CHECKOUT_DIR"
 if not os.getenv( gitModulesCheckoutOutDirEnvVar, default = None ):
     os.putenv( gitModulesCheckoutOutDirEnvVar, os.path.abspath( "./modules" ) )
@@ -13,5 +17,8 @@ lhscriptutilTilt = load_dynamic( os.path.join( gitDir, "lhscriptutil", "Tiltfile
 lhQuickBuildImage = commonTilt[ "lhQuickBuildImage" ]
 lhQuickBuildImageNoK8 = commonTilt[ "lhQuickBuildImageNoK8" ]
 cfg = lhscriptutilTilt[ "cfg" ]
+###############################################################################
+# <<< BOILERPLATE END
+###############################################################################
 
 lhQuickBuildImageNoK8( "lhmiscutil", cfg )
